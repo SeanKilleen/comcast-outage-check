@@ -1,6 +1,9 @@
 $unfilteredLogName = "../input/syslog.log"
 $filteredLogName = "../output/filteredSyslog.log"
-$csvName = "../output/logs.csv"
+$dedupedCsv = "../output/logs.csv"
+
+$timestamp = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
+$outputCsv = "../output/outages_$timestamp.csv"
 
 Remove-Item -Force $filteredLogName -ErrorAction Ignore
 
@@ -24,8 +27,9 @@ for ($i = 0; $i -lt $filteredLogLines.Length; $i++){
 
 $deduped
 
-$deduped | Export-Csv $csvName -NoTypeInformation -Force
+$deduped | Export-Csv $dedupedCsv -NoTypeInformation -Force
 
+$output = @()
 for ($i = 1; $i -lt $deduped.Length; $i++){
     $entry = $deduped[$i]
 
@@ -40,5 +44,16 @@ for ($i = 1; $i -lt $deduped.Length; $i++){
 
     $outageLength = New-Timespan -Start $outageStartTime -End $outageEndTime
 
-    "An outage began " + $outageStartTime + " and lasted " + $outageLength.TotalSeconds + " seconds"
+    $properties = @{
+        OutageStart = $outageStartTime
+        LengthInSeconds = $outageLength.TotalSeconds
+    }
+    $obj = New-Object psobject -Property $properties
+    $output += $obj
 }
+
+foreach($item in $output | Sort-Object OutageStart){
+    Write-Host "An outage began " $item.OutageStart " and lasted " $item.LengthInSeconds " seconds"
+}
+
+$output | Sort-Object OutageStart | Export-Csv $outputCsv -NoTypeInformation -Force
