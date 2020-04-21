@@ -26,3 +26,19 @@ $deduped
 
 $deduped | Export-Csv $csvName -NoTypeInformation -Force
 
+for ($i = 1; $i -lt $deduped.Length; $i++){
+    $entry = $deduped[$i]
+
+    if($entry.OnOff -eq 'ON'){
+        # We only care about outages
+        continue
+    }
+
+    $outageStartTime = $entry.Date
+
+    $outageEndTime = $deduped[$i - 1].Date
+
+    $outageLength = New-Timespan -Start $outageStartTime -End $outageEndTime
+
+    "An outage began " + $outageStartTime + " and lasted " + $outageLength.TotalSeconds + " seconds"
+}
