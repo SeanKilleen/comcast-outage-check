@@ -52,8 +52,8 @@ for ($i = 1; $i -lt $deduped.Length; $i++){
     $output += $obj
 }
 
-foreach($item in $output | Sort-Object OutageStart){
-    Write-Host "An outage began " $item.OutageStart " and lasted " $item.LengthInSeconds " seconds"
-}
+# foreach($item in $output | Sort-Object OutageStart){
+#     Write-Host "An outage began " $item.OutageStart " and lasted " $item.LengthInSeconds " seconds"
+# }
 
 $output | Sort-Object OutageStart | Export-Csv $outputCsv -NoTypeInformation -Force
