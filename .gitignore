@@ -4,8 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 input/*.log
-output/*.                    console.log("showing: ", skillName);
 output/*.csv
+output/*.xlsx
 
 # User-specific files
 *.rsuser
